@@ -1,5 +1,5 @@
 import './App.css';
-import GameCard from './gamescreen';
+import GameCard from './GameScreen';
 
 function App() {
   return (

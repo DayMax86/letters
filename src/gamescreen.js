@@ -3,6 +3,7 @@
 import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
 import React from 'react';
+import { gameGrid } from './Game';
 
 export const GameCard = () => {
     const screenSize = useWindowSize();
@@ -12,6 +13,8 @@ export const GameCard = () => {
                 <LettersGrid/>
                 <button onClick={() => {
                     //Temporary button to test functionality
+                    alert(gameGrid.grid[1][1].letter);
+                    
                 }}>Press me!</button>
             </Paper>
         </>
@@ -19,46 +22,41 @@ export const GameCard = () => {
 }
 
 const LettersGrid = () => {
+    //Create maximum-size visual table
+    var table = document.createElement("TABLE");
+    table.setAttribute("id", "grid");
+
     return (
-        < >
-            <table>
-                <tr>
-                    <td><LetterSquare x="0" y="0"/></td>
-                    <td><LetterSquare x="1" y="0"/></td>
-                    <td><LetterSquare x="2" y="0"/></td>
-                </tr>
-                <tr>
-                    <td><LetterSquare x="0" y="1"/></td>
-                    <td><LetterSquare x="1" y="1"/></td>
-                    <td><LetterSquare x="2" y="1"/></td>
-                </tr>
-                <tr>
-                    <td><LetterSquare x="0" y="2"/></td>
-                    <td><LetterSquare x="1" y="2"/></td>
-                    <td><LetterSquare x="2" y="2"/></td>
-                </tr>
-            </table>
-        </>
+        <table>
+            <tbody>
+                {
+                    gameGrid.grid.map(row => {
+                        return (<tr key={row.x}>
+                            {
+                                gameGrid.grid.map(cell => { 
+                                    return (<td key={cell}> <LetterSquare value={cell} /></td>);
+                                })
+                            }
+                        </tr>);
+                    })
+                }
+            </tbody>
+        </table>
     );
 }
 
 const LetterSquare = (props) => {
-    const screenWidth = useWindowSize().width;
     const [value, setValue] = React.useState('');
     return (
         <g>
-            <foreignObject
-                justifyContent='center'
-                border='10'
-                borderColor='red'
-                display='flex'
-                backgroundColor='red'>
+            <foreignObject>
                 <input
                     maxLength="1"
                     size="1"
                     value={value}
                     onChange={(event) => {
                         setValue(event.target.value);
+                        gameGrid.grid[props.x][props.y].letter = value;
                     }}
                 />
             </foreignObject>
