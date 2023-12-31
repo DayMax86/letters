@@ -1,7 +1,7 @@
 
 import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
-import React from 'react';
+import { useState } from 'react';
 
 export const GameCard = () => {
     const screenSize = useWindowSize();
@@ -18,126 +18,78 @@ export const GameCard = () => {
     );
 }
 
-class Grid extends React.Component {
-    constructor(props) {
-        super(props);
-        this.width = props.width;
-        this.height = props.height;
-        this.state = { value: null };
-        this.grid = [10][10];
+function Grid() {
+    const [squares, setSquares] = useState(Array(25).fill(''));
+
+    function handleChange(index, letter) {
+        const newGrid = squares.slice();
+        newGrid[index] = {letter};
+        setSquares(newGrid);
+        alert("newGrid[" + index + "] = " + letter);
     }
 
-    componentDidMount() {
-        //Initialise the grid
-        this.setState(Array.from({ length: this.height }).map(() =>
-            Array.from({ length: this.width }).fill(new LetterNode('A'))
-        ));
-        for (let x = 0; x < this.width; x++) {
-            for (let y = 0; y < this.height; y++) {
-                this.grid[x][y].x = x;
-                this.grid[x][y].y = y;
-            }
-        }
-    }
-
-    //Create maximum-size visual table
-    render() {
-        if (this.grid != null) {
-            return (
-                <table>
-                    <tbody>
-                        {
-                            this.grid.map(row => {
-                                return (<tr key={row.x}>
-                                    {
-                                        this.grid.map(cell => {
-                                            return (<td key={cell}> <LetterSquare
-                                                letter={cell.values}
-
-                                            /></td>);
-                                        })
-                                    }
-                                </tr>);
-                            })
-                        }
-                    </tbody>
-                </table>
-            );
-        }
-    }
+    return (
+        < >
+            <div className="gridrow">
+                <LetterSquare i={0} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={1} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={2} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={3} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={4} onLetterChange={(index, letter) => { handleChange(index, letter) }}/> 
+            </div>
+            <div className="gridrow">
+                <LetterSquare i={5} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={6} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={7} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={8} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={9} onLetterChange={(index, letter) => { handleChange(index, letter) }}/> 
+            </div>
+            <div className="gridrow">
+                <LetterSquare i={10} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={11} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={12} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={13} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={14} onLetterChange={(index, letter) => { handleChange(index, letter) }}/> 
+            </div>
+            <div className="gridrow">
+                <LetterSquare i={15} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={16} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={17} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={18} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={19} onLetterChange={(index, letter) => { handleChange(index, letter) }}/> 
+            </div>
+            <div className="gridrow">
+                <LetterSquare i={20} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={21} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={22} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={23} onLetterChange={(index, letter) => { handleChange(index, letter) }}/>
+                <LetterSquare i={24} onLetterChange={(index, letter) => { handleChange(index, letter) }}/> 
+            </div>
+        </>
+    );
 }
 
-class LetterNode {
-    constructor(letter, xpos, ypos) {
-        this.letter = letter;
-        this.neighbours = null;
-        this.x = xpos;
-        this.y = ypos;
-    }
-}
+function LetterSquare({ i, onLetterChange }) {
 
-class LetterSquare extends React.Component {
+    const [value, setValue] = useState('');
+    const index = i;
 
-    constructor(props) {
-        super(props);
-        console.log(props.letter)
-        this.state = { value: null };
-        this.letter = props.letter;
-        this.x = props.x;
-        this.y = props.y;
-    }
+    return (
+        <g>
+            <foreignObject>
+                <input className='letterSquare'
+                    maxLength="1"
+                    size="1"
+                    value={value}
+                    onChange={(event) => {
+                        setValue(event.target.value);
+                        onLetterChange(index, event.target.value);
+                    }}
+                />
+            </foreignObject>
+        </g>
+    );
 
-    componentDidMount() {
-        this.setState({ value: new LetterNode('', 0, 0) });
-    }
-
-    render() {
-        return (
-            <g>
-                <foreignObject>
-                    <input
-                        maxLength="1"
-                        size="1"
-                        value={this.state.letter}
-                        onChange={(event) => {
-                            this.setState({ value: LetterNode(event.target.value, this.x, this.y) });
-                        }}
-                    />
-                </foreignObject>
-            </g>
-        );
-    }
 }
 
 export default GameCard;
-
-
-/*
-    getNeighbours = function () {
-        //Check the eight neighbouring squares
-        if (grid[this.x - 1][this.y - 1] != null) {
-            this.neighbours += grid[this.x - 1][this.y - 1];
-        }
-        if (grid[this.x - 1][this.y] != null) {
-            this.neighbours += grid[this.x - 1][this.y];
-        }
-        if (grid[this.x - 1][this.y + 1] != null) {
-            this.neighbours += grid[this.x - 1][this.y + 1];
-        }
-        if (grid[this.x][this.y - 1] != null) {
-            this.neighbours += grid[this.x][this.y - 1];
-        }
-        if (grid[this.x][this.y + 1] != null) {
-            this.neighbours += grid[this.x][this.y + 1];
-        }
-        if (grid[this.x + 1][this.y - 1] != null) {
-            this.neighbours += grid[this.x + 1][this.y - 1];
-        }
-        if (grid[this.x + 1][this.y] != null) {
-            this.neighbours += grid[this.x + 1][this.y];
-        }
-        if (grid[this.x + 1][this.y + 1] != null) {
-            this.neighbours += grid[this.x + 1][this.y + 1];
-        }
-    }
-    */
