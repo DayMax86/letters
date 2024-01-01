@@ -11,7 +11,7 @@ export const GameCard = () => {
                 <Grid />
                 <button onClick={() => {
                     //Temporary button to test functionality
-                    
+
                 }}>Press me!</button>
             </Paper>
         </>
@@ -25,7 +25,54 @@ function Grid() {
         const newGrid = squares.slice();
         newGrid[index] = {letter};
         setSquares(newGrid);
-        alert("newGrid[" + index + "] = " + letter);
+        if (checkWordPresence("test")) {
+            alert("Word is present!!");
+        } else {
+            //alert("Word not present");
+        }
+    }
+
+    function checkWordPresence(word) {
+        //Check to see if a word is in the grid (success criterion)
+        //See if the grid contains the starting letter anywhere
+        squares.forEach( (s) => {
+            console.log("Checking square " + s.letter);
+            if (word.startsWith(s.letter)) {
+                if (word.length === 1) {
+                    //We've been through the entire word and the final starting character is present
+                    //So the word is present!
+                    alert("Word is present!");
+                    return true;
+                    //Later this should return the path taken so the player can see the route.
+                }
+                //Get the letter's index and check its neighbours.
+                findNeighbours(squares.indexOf(s)).forEach((n) => {
+                    if (word.charAt(1)!= null && word.charAt(1) === n.letter) {
+                        var shortenedWord = word.substring(1);
+                        console.log("Checking for substring " + shortenedWord);
+                        checkWordPresence(shortenedWord);
+                    }
+                })
+            }
+        } )
+        //  If it does, get that letter's index
+        //      Check the neighbouring squares for the next letter in the word
+        //          If present, repeat the process with this new index
+        //Exhaust this process for all starting letters, or return if word is found
+    }
+
+    function findNeighbours(index) {
+        var neighboursList = Array(8).fill('');
+        //8 possible neighbours
+        if (squares[index-6]!=null) {neighboursList[0] = squares[index-6]}
+        if (squares[index-5]!=null) {neighboursList[1] = squares[index-5]}
+        if (squares[index-4]!=null) {neighboursList[2] = squares[index-4]}
+        if (squares[index-1]!=null) {neighboursList[3] = squares[index-1]}
+        if (squares[index+1]!=null) {neighboursList[4] = squares[index+1]}
+        if (squares[index+4]!=null) {neighboursList[5] = squares[index+4]}
+        if (squares[index+5]!=null) {neighboursList[6] = squares[index+5]}
+        if (squares[index+6]!=null) {neighboursList[7] = squares[index+6]}
+        return neighboursList;
     }
 
     return (
