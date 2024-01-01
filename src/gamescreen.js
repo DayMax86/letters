@@ -1,7 +1,7 @@
 
 import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 export const GameCard = () => {
     const screenSize = useWindowSize();
@@ -21,27 +21,29 @@ export const GameCard = () => {
 function Grid() {
     const [squares, setSquares] = useState(Array(25).fill(''));
 
-    function handleChange(index, letter) {
-        const newGrid = squares.slice();
-        newGrid[index] = {letter};
-        setSquares(newGrid);
+    useEffect(() => {
         if (checkWordPresence("test")) {
             alert("Word is present!!");
         } else {
             //alert("Word not present");
         }
+        console.log(victory);
+      }, [squares]);
+
+    function handleChange(index, letter) {
+        const newGrid = squares.slice();
+        newGrid[index] = {letter};
+        setSquares(newGrid);
     }
 
     function checkWordPresence(word) {
         //Check to see if a word is in the grid (success criterion)
         //See if the grid contains the starting letter anywhere
         squares.forEach( (s) => {
-            console.log("Checking square " + s.letter);
             if (word.startsWith(s.letter)) {
                 if (word.length === 1) {
                     //We've been through the entire word and the final starting character is present
                     //So the word is present!
-                    alert("Word is present!");
                     return true;
                     //Later this should return the path taken so the player can see the route.
                 }
@@ -54,11 +56,7 @@ function Grid() {
                     }
                 })
             }
-        } )
-        //  If it does, get that letter's index
-        //      Check the neighbouring squares for the next letter in the word
-        //          If present, repeat the process with this new index
-        //Exhaust this process for all starting letters, or return if word is found
+        });
     }
 
     function findNeighbours(index) {
