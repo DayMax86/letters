@@ -9,11 +9,70 @@ export const GameCard = () => {
         < >
             <Paper elevation={5} sx={{ minWidth: screenSize * 0.95, minHeight: screenSize * 0.95, m: 2 }}>
                 <Grid />
-                <button onClick={() => {
-                    //Temporary button to test functionality
-
-                }}>Press me!</button>
+                <WordList />
             </Paper>
+        </>
+    );
+}
+
+export const gameColors = {
+    CORRECT: '#008f26',
+    INCORRECT: '#8f0000',
+}
+
+var globalWords = new Array().fill('');
+export const WordList = () => {
+
+    class TargetWord {
+        constructor(props) {
+            this.state = {
+                value: props.value,
+                complete: false,
+                color: gameColors.INCORRECT,
+            };
+        }
+
+        updateValue(newValue) {
+            this.state = {
+                value: newValue,
+                complete: this.state.complete,
+            };
+        }
+        toggleComplete(props) {
+            this.state = {
+                value: this.state.value,
+                complete: !(this.state.complete),
+            };
+            if(props!=null) {this.state.complete=props};
+            console.log(this.state.complete);
+            if(this.state.complete) {
+                this.state.color = gameColors.CORRECT;
+            } else {
+                this.state.color = gameColors.INCORRECT;
+            }
+        }
+    }
+
+
+    const word1 = new TargetWord({value:'test'});
+    const word2 = new TargetWord({value:'example'});
+    const word3 = new TargetWord({value:'sample'});
+    const word4 = new TargetWord({value:''});
+    const word5 = new TargetWord({value:''});
+
+    globalWords[0] = word1;
+    globalWords[1] = word2;
+    globalWords[2] = word3;
+    globalWords[3] = word4;
+    globalWords[4] = word5;
+
+    return (
+        < >
+            <div>{word1.state.value}</div>
+            <div>{word2.state.value}</div>
+            <div>{word3.state.value}</div>
+            <div>{word4.state.value}</div>
+            <div>{word5.state.value}</div>
         </>
     );
 }
@@ -22,13 +81,12 @@ function Grid() {
     const [squares, setSquares] = useState(Array(25).fill(''));
 
     useEffect(() => {
-        if (checkWordPresence("test")) {
-            alert("Word is present!!");
-        } else {
-            //alert("Word not present");
-        }
-        console.log(victory);
-      }, [squares]);
+        checkWordPresence(globalWords[0].state.value, 0)
+        checkWordPresence("example");
+        checkWordPresence("sample");
+        checkWordPresence("");
+        checkWordPresence("");
+    }, [squares]);
 
     function handleChange(index, letter) {
         const newGrid = squares.slice();
@@ -36,23 +94,22 @@ function Grid() {
         setSquares(newGrid);
     }
 
-    function checkWordPresence(word) {
-        //Check to see if a word is in the grid (success criterion)
+    function checkWordPresence(word, index) {
         //See if the grid contains the starting letter anywhere
         squares.forEach( (s) => {
             if (word.startsWith(s.letter)) {
                 if (word.length === 1) {
                     //We've been through the entire word and the final starting character is present
-                    //So the word is present!
-                    return true;
+                    console.log("word is present :)");
+                    globalWords[index].toggleComplete(true);
                     //Later this should return the path taken so the player can see the route.
+                    return;
                 }
                 //Get the letter's index and check its neighbours.
                 findNeighbours(squares.indexOf(s)).forEach((n) => {
                     if (word.charAt(1)!= null && word.charAt(1) === n.letter) {
                         var shortenedWord = word.substring(1);
-                        console.log("Checking for substring " + shortenedWord);
-                        checkWordPresence(shortenedWord);
+                        checkWordPresence(shortenedWord, index);
                     }
                 })
             }
