@@ -2,90 +2,52 @@
 import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
 import { useState, useEffect } from 'react';
-
-export const GameCard = () => {
-    const screenSize = useWindowSize();
-    return (
-        < >
-            <Paper elevation={5} sx={{ minWidth: screenSize * 0.95, minHeight: screenSize * 0.95, m: 2 }}>
-                <Grid />
-                <WordList />
-            </Paper>
-        </>
-    );
-}
+import { TargetWord } from './classes/TargetWord';
 
 export const gameColors = {
     CORRECT: '#008f26',
     INCORRECT: '#8f0000',
 }
 
-var globalWords = new Array().fill('');
-export const WordList = () => {
+export const GameCard = () => {
+    const screenSize = useWindowSize();
 
-    class TargetWord {
-        constructor(props) {
-            this.state = {
-                value: props.value,
-                complete: false,
-                color: gameColors.INCORRECT,
-            };
-        }
+    const [word1, setWord1] = useState(new TargetWord({value:'test'}));
+    const [word2, setWord2] = useState(new TargetWord({value:'example'}));
+    const [word3, setWord3] = useState(new TargetWord({value:'sample'}));
+    const [word4, setWord4] = useState(new TargetWord({value:'-'}));
+    const [word5, setWord5] = useState(new TargetWord({value:'-'}));
+    
+    var targetWords = new Array();
+    targetWords.push(word1);
+    targetWords.push(word2);
+    targetWords.push(word3);
+    targetWords.push(word4);
+    targetWords.push(word5);
 
-        updateValue(newValue) {
-            this.state = {
-                value: newValue,
-                complete: this.state.complete,
-            };
-        }
-        toggleComplete(props) {
-            this.state = {
-                value: this.state.value,
-                complete: !(this.state.complete),
-            };
-            if(props!=null) {this.state.complete=props};
-            console.log(this.state.complete);
-            if(this.state.complete) {
-                this.state.color = gameColors.CORRECT;
-            } else {
-                this.state.color = gameColors.INCORRECT;
-            }
+    function onSuccessChange(w, correct) {
+        if (correct) {
+            alert("correct!!");
         }
     }
 
-
-    const word1 = new TargetWord({value:'test'});
-    const word2 = new TargetWord({value:'example'});
-    const word3 = new TargetWord({value:'sample'});
-    const word4 = new TargetWord({value:''});
-    const word5 = new TargetWord({value:''});
-
-    globalWords[0] = word1;
-    globalWords[1] = word2;
-    globalWords[2] = word3;
-    globalWords[3] = word4;
-    globalWords[4] = word5;
-
     return (
         < >
-            <div>{word1.state.value}</div>
-            <div>{word2.state.value}</div>
-            <div>{word3.state.value}</div>
-            <div>{word4.state.value}</div>
-            <div>{word5.state.value}</div>
+            <Paper elevation={5} sx={{ minWidth: screenSize * 0.95, minHeight: screenSize * 0.95, m: 2 }}>
+                <Grid words={targetWords} markSuccess={onSuccessChange}/>
+                    <p color={word1.state.color}>{word1.value}</p>
+            </Paper>
         </>
     );
 }
 
-function Grid() {
+function Grid(props) {
     const [squares, setSquares] = useState(Array(25).fill(''));
 
     useEffect(() => {
-        checkWordPresence(globalWords[0].state.value, 0)
-        checkWordPresence("example");
-        checkWordPresence("sample");
-        checkWordPresence("");
-        checkWordPresence("");
+        for (let i = 0; i < 5; i++) {
+            checkWordPresence(props.words[i], i);
+        }
     }, [squares]);
 
     function handleChange(index, letter) {
@@ -97,18 +59,18 @@ function Grid() {
     function checkWordPresence(word, index) {
         //See if the grid contains the starting letter anywhere
         squares.forEach( (s) => {
-            if (word.startsWith(s.letter)) {
+            if (word.state.value.startsWith(s.letter)) {
                 if (word.length === 1) {
                     //We've been through the entire word and the final starting character is present
                     console.log("word is present :)");
-                    globalWords[index].toggleComplete(true);
+                    props.markSuccess(word, true);
                     //Later this should return the path taken so the player can see the route.
                     return;
                 }
                 //Get the letter's index and check its neighbours.
                 findNeighbours(squares.indexOf(s)).forEach((n) => {
-                    if (word.charAt(1)!= null && word.charAt(1) === n.letter) {
-                        var shortenedWord = word.substring(1);
+                    if (word.state.value.charAt(1)!= null && word.state.value.charAt(1) === n.letter) {
+                        var shortenedWord = word.state.value.substring(1);
                         checkWordPresence(shortenedWord, index);
                     }
                 })
