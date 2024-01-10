@@ -6,6 +6,7 @@ export class TargetWord {
             value: props.value,
             complete: false,
             color: gameColors.INCORRECT,
+            path: new Array()
         };
     }
 

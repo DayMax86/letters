@@ -15,8 +15,8 @@ export const GameCard = () => {
     const [word1, setWord1] = useState(new TargetWord({value:'test'}));
     const [word2, setWord2] = useState(new TargetWord({value:'example'}));
     const [word3, setWord3] = useState(new TargetWord({value:'sample'}));
-    const [word4, setWord4] = useState(new TargetWord({value:'-'}));
-    const [word5, setWord5] = useState(new TargetWord({value:'-'}));
+    const [word4, setWord4] = useState(new TargetWord({value:'blah'}));
+    const [word5, setWord5] = useState(new TargetWord({value:'blergh'}));
     
     var targetWords = new Array();
     targetWords.push(word1);
@@ -27,7 +27,8 @@ export const GameCard = () => {
 
     function onSuccessChange(w, correct) {
         if (correct) {
-            alert("correct!!");
+            console.log(w.state.value + " is present!!");
+            console.log(w.state.value + "'s path = " + w.state.path);
         }
     }
 
@@ -43,9 +44,14 @@ export const GameCard = () => {
 
 function Grid(props) {
     const [squares, setSquares] = useState(Array(25).fill(''));
+    const [shortenedWord, setShortenedWord] = useState(new TargetWord({value: ''}));
+    var currentWord = props.words[0];
+    var currentWordPath = Array()
 
     useEffect(() => {
         for (let i = 0; i < 5; i++) {
+            currentWord = props.words[i];
+            currentWordPath = Array();
             checkWordPresence(props.words[i], i);
         }
     }, [squares]);
@@ -53,24 +59,25 @@ function Grid(props) {
     function handleChange(index, letter) {
         const newGrid = squares.slice();
         newGrid[index] = {letter};
-        setSquares(newGrid);
+        setSquares(newGrid);   
     }
 
     function checkWordPresence(word, index) {
         //See if the grid contains the starting letter anywhere
         squares.forEach( (s) => {
             if (word.state.value.startsWith(s.letter)) {
-                if (word.length === 1) {
+                currentWordPath.push(squares.indexOf(s));
+                if (word.state.value.length === 1) {
                     //We've been through the entire word and the final starting character is present
-                    console.log("word is present :)");
-                    props.markSuccess(word, true);
+                    currentWord.state.path = currentWordPath;
+                    props.markSuccess(currentWord, true);
                     //Later this should return the path taken so the player can see the route.
                     return;
                 }
                 //Get the letter's index and check its neighbours.
                 findNeighbours(squares.indexOf(s)).forEach((n) => {
                     if (word.state.value.charAt(1)!= null && word.state.value.charAt(1) === n.letter) {
-                        var shortenedWord = word.state.value.substring(1);
+                        shortenedWord.state.value = word.state.value.substring(1);
                         checkWordPresence(shortenedWord, index);
                     }
                 })
