@@ -79,7 +79,7 @@ export function DisplaySquare({ x, y, onLetterChange }) {
                     value={value}
                     onChange={(event) => {
                         setValue(event.target.value);
-                        onLetterChange(x, y, event.target.value);
+                        onLetterChange([x, y, event.target.value]);
                     }}
                 />
             </foreignObject>

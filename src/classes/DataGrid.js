@@ -20,9 +20,7 @@ export class DataGrid {
                             x={i}
                             y={k}
                             onLetterChange={(props) => {
-                                this.onGridChange.bind(props)
-                                let sq = this.state.squares.filter((s) => s.state.x === props.x && s.state.y === props.y)
-                                sq.state.value = props.value; //TODO() change this!
+                                this.onGridChange(props);
                             }}
                         /> 
                     })
@@ -30,12 +28,11 @@ export class DataGrid {
             }
         }
 
-    var shortenedWord = new TargetWord({value: ''});
-
     }
     
     onGridChange(props) {
-        console.log(this);
+        var squareToUpdate = this.state.squares.filter((s) => s.state.x == props[0] && s.state.y == props[1]);
+        squareToUpdate[0].state.value = props[2];
         for (let i = 0; i < 5; i++) { //Change hardcoded 5 to length of target words list TODO()
             var targetWord = this.state.targetWords[i];
             var currentWordPath = Array();
@@ -51,7 +48,7 @@ export class DataGrid {
                 currentWordPath.push(s);
                 if (targetWord.state.value.length === 1) {
                     //We've been through the entire word and the final starting character is present
-                    console.log("Word " + currentWord + " is present!");
+                    // console.log("Word " + currentWord + " is present!");
                     currentWord.state.path = currentWordPath;
                     targetWord.markSuccess(currentWord, true);
                     return;
@@ -60,12 +57,11 @@ export class DataGrid {
                 var neighbours = [];
                 neighbours = this.findNeighbours(s);
                 neighbours.forEach((n) => {
-                    console.log("neighbours.length = " + neighbours.length);
-                    console.log("n.state.value = " + n.state.value);
-                    console.log("Looking at neighbours");
-                    if (targetWord.state.value.charAt(1) != null && targetWord.state.value.charAt(1) === n.state.value) {
-                        this.shortenedWord.state.value = targetWord.state.value.substring(1);
-                        this.checkWordPresence(this.shortenedWord);
+                    // console.log("neighbours = " + neighbours);
+                    // console.log("n[0].state.value = " + n[0].state.value);
+                    if (targetWord.state.value.charAt(1) != null && targetWord.state.value.charAt(1) === n[0].state.value) {
+                        var shortenedWord = new TargetWord({value: targetWord.state.value.substring(1)});
+                        this.checkWordPresence(shortenedWord, currentWord, currentWordPath);
                     }
                 })
             }
@@ -78,12 +74,14 @@ export class DataGrid {
         for (let i = -1; i < 2; i++) { //Each row
            for (let k = -1; k < 2; k++) { //Each column
                 if (!(i === 0 && k === 0)) { //Don't count the square itself
-                    console.log("x: " + (square.state.x + i) + " | y: " + (square.state.y + k));
-                    console.log("square.state.x: " + square.state.x);
-                    console.log(this.state.squares.filter((s) => s.state.x === (square.state.x + i) && s.state.y === (square.state.y + k)));
-                    neighboursList.push(
-                        this.state.squares.filter((s) => s.state.x === (square.state.x + i) && s.state.y === (square.state.y + k))
-                    );
+                    // console.log("x: " + (square.state.x + i) + " | y: " + (square.state.y + k));
+                    // console.log("square.state.x: " + square.state.x);
+                    var n = (this.state.squares.filter((s) => s.state.x === (square.state.x + i) && s.state.y === (square.state.y + k)));
+                    if (!(n.length === 0)) {
+                        neighboursList.push(
+                            this.state.squares.filter((s) => s.state.x === (square.state.x + i) && s.state.y === (square.state.y + k))
+                        );
+                    }
                 }
             }
         }
