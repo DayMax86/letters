@@ -1,4 +1,4 @@
-import { DisplaySquare } from '../GameScreen.js';
+import { DisplaySquare, gameColors } from '../GameScreen.js';
 import { TargetWord } from './TargetWord.js';
 
 export class DataGrid {
@@ -11,20 +11,27 @@ export class DataGrid {
         }
         for (let i = 0; i < this.state.width; i++) { //Each row
             for (let k = 0; k < this.state.height; k++) { //Each column
-                this.state.squares.push(
-                    new LetterSquare({
-                        value: '',
-                        x: i,
-                        y: k,
-                        displaySquare: <DisplaySquare
-                            x={i}
-                            y={k}
-                            onLetterChange={(props) => {
-                                this.onGridChange(props);
-                            }}
-                        /> 
-                    })
-                )                
+
+                var ls = new LetterSquare({
+                    value: '',
+                    x: i,
+                    y: k,
+                })
+
+                var ds = <DisplaySquare
+                    x={i}
+                    y={k}
+                    onLetterChange={(props) => {
+                        this.onGridChange(props);
+                    }}
+                    updateColour={() => {
+                        return(ls.state.colour)
+                    }}
+                />
+
+                ls.state.displaySquare = ds;
+                this.state.squares.push(ls);
+
             }
         }
 
@@ -42,7 +49,7 @@ export class DataGrid {
 
     checkWordPresence(targetWord, currentWord, currentWordPath) {
         //See if the grid contains the starting letter anywhere
-        currentWordPath = [];
+        //currentWordPath = [];
         this.state.squares.forEach( (s) => {
             if (targetWord.state.value.startsWith(s.state.value) && s.state.value.length > 0) {
                 currentWordPath.push(s);
@@ -51,7 +58,11 @@ export class DataGrid {
                     // console.log("Word " + currentWord + " is present!");
                     currentWord.state.path = currentWordPath;
                     targetWord.markSuccess(currentWord, true);
-                    return;
+                    // currentWord.state.path.forEach( (ps) => {
+                    //     ps.updateColour(gameColors.CORRECT);
+                    //     console.log(ps.state.colour);
+                    // })
+                    return currentWord.state.path;
                 }
                 //Get the letter's index and check its neighbours.
                 var neighbours = [];
@@ -74,8 +85,6 @@ export class DataGrid {
         for (let i = -1; i < 2; i++) { //Each row
            for (let k = -1; k < 2; k++) { //Each column
                 if (!(i === 0 && k === 0)) { //Don't count the square itself
-                    // console.log("x: " + (square.state.x + i) + " | y: " + (square.state.y + k));
-                    // console.log("square.state.x: " + square.state.x);
                     var n = (this.state.squares.filter((s) => s.state.x === (square.state.x + i) && s.state.y === (square.state.y + k)));
                     if (!(n.length === 0)) {
                         neighboursList.push(
@@ -97,9 +106,12 @@ export class LetterSquare {
             value: props.value,
             x: props.x,
             y: props.y,
-            onValueChange: props.onChange,
             //Associated display square
-            displaySquare: props.displaySquare,
+            displaySquare: null,
+            colour: null,
         }
+    }
+    updateColour(c) {
+        this.state.colour = c;
     }
 }

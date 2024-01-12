@@ -26,13 +26,6 @@ export const GameCard = () => {
     targetWords.push(word4);
     targetWords.push(word5);
 
-    function onSuccessChange(w, correct) {
-        if (correct) {
-            console.log(w.state.value + " is present!!");
-            console.log(w.state.value + "'s path = " + w.state.path);
-        }
-    }
-
     const gameGrid = new DataGrid({
         width:5, 
         height:5,
@@ -66,9 +59,10 @@ function DisplayGrid(props) {
     );
 }
 
-export function DisplaySquare({ x, y, onLetterChange }) {
+export function DisplaySquare({ x, y, onLetterChange, updateColour }) {
 
     const [value, setValue] = useState('');
+    const [colour, setColour] = useState(gameColors.INCORRECT);
 
     return (
         <g>
@@ -77,8 +71,10 @@ export function DisplaySquare({ x, y, onLetterChange }) {
                     maxLength="1"
                     size="1"
                     value={value}
+                    style={{backgroundColor: colour}}
                     onChange={(event) => {
                         setValue(event.target.value);
+                        setColour(updateColour);
                         onLetterChange([x, y, event.target.value]);
                     }}
                 />

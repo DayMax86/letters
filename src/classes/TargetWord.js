@@ -13,7 +13,10 @@ export class TargetWord {
     markSuccess(word,correct){
         if (correct) {
             console.log(word.state.value + " is present!!");
-            console.log(word.state.value + "'s path = " + word.state.path);
+            console.log(word.state.value + "'s path = " );
+            for (let i = 0; i < word.state.path.length; i++) {
+                console.log(word.state.path[i].state.x + " , " + word.state.path[i].state.y);
+            }
         }
     }
 
