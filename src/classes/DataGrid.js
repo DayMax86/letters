@@ -1,3 +1,4 @@
+import React from 'react';
 import { DisplaySquare, gameColors } from '../GameScreen.js';
 import { TargetWord } from './TargetWord.js';
 
@@ -16,17 +17,13 @@ export class DataGrid {
                     value: '',
                     x: i,
                     y: k,
+                    grid: this,
                 })
 
                 var ds = <DisplaySquare
                     x={i}
                     y={k}
-                    onLetterChange={(props) => {
-                        this.onGridChange(props);
-                    }}
-                    updateColour={() => {
-                        return(ls.state.colour)
-                    }}
+                    letterSquare={ls}
                 />
 
                 ls.state.displaySquare = ds;
@@ -36,10 +33,12 @@ export class DataGrid {
         }
 
     }
+
+    
     
     onGridChange(props) {
         var squareToUpdate = this.state.squares.filter((s) => s.state.x == props[0] && s.state.y == props[1]);
-        squareToUpdate[0].state.value = props[2];
+        //squareToUpdate[0].state.colour = '#FACE44';
         for (let i = 0; i < 5; i++) { //Change hardcoded 5 to length of target words list TODO()
             var targetWord = this.state.targetWords[i];
             var currentWordPath = Array();
@@ -58,10 +57,10 @@ export class DataGrid {
                     // console.log("Word " + currentWord + " is present!");
                     currentWord.state.path = currentWordPath;
                     targetWord.markSuccess(currentWord, true);
-                    // currentWord.state.path.forEach( (ps) => {
-                    //     ps.updateColour(gameColors.CORRECT);
-                    //     console.log(ps.state.colour);
-                    // })
+                    currentWord.state.path.forEach((ps) => {
+                        ps.updateColour('#FACE44');
+                        console.log(ps.state.colour);
+                    })
                     return currentWord.state.path;
                 }
                 //Get the letter's index and check its neighbours.
@@ -109,9 +108,15 @@ export class LetterSquare {
             //Associated display square
             displaySquare: null,
             colour: null,
+            //Grid it belongs to
+            grid: props.grid,
         }
     }
+
     updateColour(c) {
         this.state.colour = c;
+    }
+    onLetterChange() {
+        this.state.grid.onGridChange(this.state.x, this.state.y, this.state.value);
     }
 }
