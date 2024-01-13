@@ -1,7 +1,7 @@
 
 import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
-import React, { useState, useEffect, Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { TargetWord } from './classes/TargetWord';
 import { DataGrid } from './classes/DataGrid';
 
@@ -49,7 +49,7 @@ function DisplayGrid(props) {
         if (i % rowLimit === 0) {
             elementsToDisplay.push(<br></br>);
         }
-        elementsToDisplay.push(s.state.displaySquare);
+        elementsToDisplay.push(s);
         i++;
     })
     return (
@@ -59,38 +59,38 @@ function DisplayGrid(props) {
     );
 }
 
-export class DisplaySquare extends Component {
+export const LetterSquare = (props) => {
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            value: props.value,
-            x: props.x,
-            y: props.y,
-            //Associated data square
-            letterSquare: props.letterSquare,
-            colour: null,
-        };
-      }
+    const [value, setValue] = useState('');
+    const x = props.x;
+    const y = props.y;
+    const [colour, setColour] = useState(gameColors.INCORRECT);
+    const [correct, setCorrect] = useState(false);
 
-    render() {
-        return (
-            <g>
-                <foreignObject>
-                    <input className='displaySquare'
-                        maxLength="1"
-                        size="1"
-                        value={this.state.value}
-                        style={{ backgroundColor: this.state.colour }}
-                        onChange={(event) => {
-                            this.state.value = event.target.value;
-                            this.state.letterSquare.onLetterChange();
-                        }}
-                    />
-                </foreignObject>
-            </g>
-        );
-    };
+    useEffect(() => {
+        setColour("#FACE44");
+    }, [correct]);
+
+    useEffect(() => {
+        props.onLetterChange([x, y, value]);
+    }, [value]);
+
+    return (
+        <g>
+            <foreignObject>
+                <input className='displaySquare'
+                    maxLength="1"
+                    size="1"
+                    value={value}
+                    style={{ backgroundColor: colour }}
+                    onChange={(event) => {
+                        setValue(event.target.value);
+                        setCorrect(props.isCorrect);
+                    }}
+                />
+            </foreignObject>
+        </g>
+    );
 
 }
 

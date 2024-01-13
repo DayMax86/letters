@@ -1,5 +1,5 @@
 import React from 'react';
-import { DisplaySquare, gameColors } from '../GameScreen.js';
+import { LetterSquare, gameColors } from '../GameScreen.js';
 import { TargetWord } from './TargetWord.js';
 
 export class DataGrid {
@@ -12,33 +12,18 @@ export class DataGrid {
         }
         for (let i = 0; i < this.state.width; i++) { //Each row
             for (let k = 0; k < this.state.height; k++) { //Each column
-
-                var ls = new LetterSquare({
-                    value: '',
-                    x: i,
-                    y: k,
-                    grid: this,
-                })
-
-                var ds = <DisplaySquare
-                    x={i}
+                this.state.squares.push(
+                    <LetterSquare  //Value is never getting assigned, but assigning here makes it hardcoded!
+                    x={i} 
                     y={k}
-                    letterSquare={ls}
-                />
-
-                ls.state.displaySquare = ds;
-                this.state.squares.push(ls);
-
+                    onLetterChange={(args) => this.onGridChange(args)}/>
+                );
             }
         }
 
     }
-
     
-    
-    onGridChange(props) {
-        var squareToUpdate = this.state.squares.filter((s) => s.state.x == props[0] && s.state.y == props[1]);
-        //squareToUpdate[0].state.colour = '#FACE44';
+    onGridChange(args) {
         for (let i = 0; i < 5; i++) { //Change hardcoded 5 to length of target words list TODO()
             var targetWord = this.state.targetWords[i];
             var currentWordPath = Array();
@@ -50,7 +35,7 @@ export class DataGrid {
         //See if the grid contains the starting letter anywhere
         //currentWordPath = [];
         this.state.squares.forEach( (s) => {
-            if (targetWord.state.value.startsWith(s.state.value) && s.state.value.length > 0) {
+            if (targetWord.state.value.startsWith(s.props.value) && s.props.value.length > 0) {
                 currentWordPath.push(s);
                 if (targetWord.state.value.length === 1) {
                     //We've been through the entire word and the final starting character is present
@@ -58,7 +43,7 @@ export class DataGrid {
                     currentWord.state.path = currentWordPath;
                     targetWord.markSuccess(currentWord, true);
                     currentWord.state.path.forEach((ps) => {
-                        ps.updateColour('#FACE44');
+                        //ps.updateColour('#FACE44');
                         console.log(ps.state.colour);
                     })
                     return currentWord.state.path;
@@ -97,26 +82,17 @@ export class DataGrid {
         return neighboursList;
     }
 
-}
-
-export class LetterSquare {
-    constructor(props) {
-        this.state = {
-            value: props.value,
-            x: props.x,
-            y: props.y,
-            //Associated display square
-            displaySquare: null,
-            colour: null,
-            //Grid it belongs to
-            grid: props.grid,
-        }
+    checkCorrect(x, y, targetWords) {
+        console.log("checking correct");
+        var square = this.state.squares.filter((s) => s.x === x && s.y === y);
+        targetWords.forEach(word => {
+            if (word.state.path.includes(square)) {
+                return true;
+            } else {
+                return false;
+            }
+        });       
+        return false;
     }
 
-    updateColour(c) {
-        this.state.colour = c;
-    }
-    onLetterChange() {
-        this.state.grid.onGridChange(this.state.x, this.state.y, this.state.value);
-    }
 }
