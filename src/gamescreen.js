@@ -3,7 +3,7 @@ import Paper from '@mui/material/Paper';
 import { useWindowSize } from "@uidotdev/usehooks";
 import React, { useState, useEffect } from 'react';
 import { TargetWord } from './classes/TargetWord';
-import { DataGrid } from './classes/DataGrid';
+import { DataGrid, useLetterSquare } from './classes/DataGrid';
 
 export const gameColors = {
     CORRECT: '#008f26',
@@ -61,7 +61,7 @@ function DisplayGrid(props) {
 
 export const LetterSquare = (props) => {
 
-    const [value, setValue] = useState('');
+    const value = useLetterSquare(props.value);
     const x = props.x;
     const y = props.y;
     const [colour, setColour] = useState(gameColors.INCORRECT);
@@ -84,7 +84,7 @@ export const LetterSquare = (props) => {
                     value={value}
                     style={{ backgroundColor: colour }}
                     onChange={(event) => {
-                        setValue(event.target.value);
+                        value = (event.target.value);
                         setCorrect(props.isCorrect);
                     }}
                 />

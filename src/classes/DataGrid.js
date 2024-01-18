@@ -1,6 +1,17 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { LetterSquare, gameColors } from '../GameScreen.js';
 import { TargetWord } from './TargetWord.js';
+
+export function useLetterSquare(val) {
+    const [value, setValue] = useState('A');
+    useEffect(()=> {
+        function updateValue(v) {
+            setValue(v);
+        }
+        return updateValue(val)
+    });
+    return value;
+}
 
 export class DataGrid {
     constructor(props) {
@@ -12,11 +23,12 @@ export class DataGrid {
         }
         for (let i = 0; i < this.state.width; i++) { //Each row
             for (let k = 0; k < this.state.height; k++) { //Each column
+                var ls = <LetterSquare  //Value is never getting assigned, but assigning here makes it hardcoded!
+                x={i} 
+                y={k}
+                onLetterChange={(args) => this.onGridChange(args)}/>
                 this.state.squares.push(
-                    <LetterSquare  //Value is never getting assigned, but assigning here makes it hardcoded!
-                    x={i} 
-                    y={k}
-                    onLetterChange={(args) => this.onGridChange(args)}/>
+                    ls
                 );
             }
         }
