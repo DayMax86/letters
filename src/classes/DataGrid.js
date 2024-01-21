@@ -1,16 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { LetterSquare, gameColors } from '../GameScreen.js';
-import { TargetWord } from './TargetWord.js';
+import { TargetWord } from './TargetWord';
 
-export function useLetterSquare(val) {
-    const [value, setValue] = useState('A');
-    useEffect(()=> {
-        function updateValue(v) {
-            setValue(v);
+// export function useLetterSquare(val) {
+//     const [value, setValue] = useState('A');
+//     useEffect(()=> {
+//         function updateValue(v) {
+//             setValue(v);
+//         }
+//         return updateValue(val);
+//     });
+//     return value;
+// }
+
+export class Square {
+    constructor(props) {
+        this.state = {
+            value: '',
+            x: props.x,
+            y: props.y,
         }
-        return updateValue(val)
-    });
-    return value;
+    }
+    updateValue(val) {
+        this.state.value = val;
+    }
 }
 
 export class DataGrid {
@@ -21,20 +33,8 @@ export class DataGrid {
             squares: Array(),
             targetWords: props.targetWords,
         }
-        for (let i = 0; i < this.state.width; i++) { //Each row
-            for (let k = 0; k < this.state.height; k++) { //Each column
-                var ls = <LetterSquare  //Value is never getting assigned, but assigning here makes it hardcoded!
-                x={i} 
-                y={k}
-                onLetterChange={(args) => this.onGridChange(args)}/>
-                this.state.squares.push(
-                    ls
-                );
-            }
-        }
-
     }
-    
+
     onGridChange(args) {
         for (let i = 0; i < 5; i++) { //Change hardcoded 5 to length of target words list TODO()
             var targetWord = this.state.targetWords[i];
@@ -47,7 +47,7 @@ export class DataGrid {
         //See if the grid contains the starting letter anywhere
         //currentWordPath = [];
         this.state.squares.forEach( (s) => {
-            if (targetWord.state.value.startsWith(s.props.value) && s.props.value.length > 0) {
+            if (targetWord.state.value.startsWith(s.state.value) && s.state.value.length > 0) {
                 currentWordPath.push(s);
                 if (targetWord.state.value.length === 1) {
                     //We've been through the entire word and the final starting character is present
@@ -94,17 +94,17 @@ export class DataGrid {
         return neighboursList;
     }
 
-    checkCorrect(x, y, targetWords) {
-        console.log("checking correct");
-        var square = this.state.squares.filter((s) => s.x === x && s.y === y);
-        targetWords.forEach(word => {
-            if (word.state.path.includes(square)) {
-                return true;
-            } else {
-                return false;
-            }
-        });       
-        return false;
-    }
+    // checkCorrect(x, y, targetWords) {
+    //     console.log("checking correct");
+    //     var square = this.state.squares.filter((s) => s.x === x && s.y === y);
+    //     targetWords.forEach(word => {
+    //         if (word.state.path.includes(square)) {
+    //             return true;
+    //         } else {
+    //             return false;
+    //         }
+    //     });       
+    //     return false;
+    // }
 
 }
