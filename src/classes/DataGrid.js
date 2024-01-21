@@ -1,16 +1,4 @@
-import React, { useEffect, useState } from 'react';
 import { TargetWord } from './TargetWord';
-
-// export function useLetterSquare(val) {
-//     const [value, setValue] = useState('A');
-//     useEffect(()=> {
-//         function updateValue(v) {
-//             setValue(v);
-//         }
-//         return updateValue(val);
-//     });
-//     return value;
-// }
 
 export class Square {
     constructor(props) {
@@ -18,6 +6,7 @@ export class Square {
             value: '',
             x: props.x,
             y: props.y,
+            correct: false,
         }
     }
     updateValue(val) {
@@ -55,8 +44,7 @@ export class DataGrid {
                     currentWord.state.path = currentWordPath;
                     targetWord.markSuccess(currentWord, true);
                     currentWord.state.path.forEach((ps) => {
-                        //ps.updateColour('#FACE44');
-                        console.log(ps.state.colour);
+                        ps.state.correct = true;
                     })
                     return currentWord.state.path;
                 }
@@ -93,18 +81,5 @@ export class DataGrid {
 
         return neighboursList;
     }
-
-    // checkCorrect(x, y, targetWords) {
-    //     console.log("checking correct");
-    //     var square = this.state.squares.filter((s) => s.x === x && s.y === y);
-    //     targetWords.forEach(word => {
-    //         if (word.state.path.includes(square)) {
-    //             return true;
-    //         } else {
-    //             return false;
-    //         }
-    //     });       
-    //     return false;
-    // }
 
 }

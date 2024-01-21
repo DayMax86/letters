@@ -7,7 +7,7 @@ import { TargetWord } from './classes/TargetWord';
 
 export const gameColors = {
     CORRECT: '#008f26',
-    INCORRECT: '#8f0000',
+    INCORRECT: '#face44',
 }
 export const GRID_WIDTH = 5;
 export const GRID_HEIGHT = 5;
@@ -72,7 +72,6 @@ function DisplayGrid(props) {
 export const LetterSquare = (props) => {
 
     const [colour, setColour] = useState(gameColors.INCORRECT);
-    const [correct, setCorrect] = useState(false);
     const [value, setValue] = useState('');
     const dataSquare = props.square;
 
@@ -82,8 +81,10 @@ export const LetterSquare = (props) => {
     }, [value]);
 
     useEffect(() => {
-        setColour("#FACE44");
-    }, [correct]);
+        if (dataSquare.state.correct) {
+            setColour(gameColors.CORRECT);
+        }
+    }, [dataSquare.state])
 
     return (
         <g>
