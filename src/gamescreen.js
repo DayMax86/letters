@@ -78,13 +78,15 @@ export const LetterSquare = (props) => {
     useEffect(() => {
         props.onLetterChange([props.x, props.y, value]);
         dataSquare.updateValue(value);
+        if (dataSquare.state.correct) {
+            console.log("setting colour to green");
+            setColour(gameColors.CORRECT);
+        }
     }, [value]);
 
     useEffect(() => {
-        if (dataSquare.state.correct) {
-            setColour(gameColors.CORRECT);
-        }
-    }, [dataSquare.state])
+        
+    }, [dataSquare.state.value])
 
     return (
         <g>
